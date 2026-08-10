@@ -145,7 +145,7 @@
 
         <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
             <div class="col-6">
-                <a href="${pageContext.request.contextPath}/admin/reports/details?type=PENDING_LOCALITIES" class="text-decoration-none d-block">
+                <a href="${pageContext.request.contextPath}/admin/reports/details?type=TOTAL" class="text-decoration-none d-block">
                     <div class="stat-card" style="background:#1d4ed8; color:#fff; border-top:none;">
                         <div class="stat-icon" style="color:#fff;"><i class="bi bi-geo-alt"></i></div>
                         <div class="stat-value" style="color:#fff;">${activeLocalities}</div>
