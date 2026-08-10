@@ -115,7 +115,7 @@
                                 <thead>
                                     <tr>
                                         <th>Locality Name</th>
-                                        <th>Mandal Name</th>
+                                        <th>Division Name</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -142,7 +142,7 @@
                                 <thead>
                                     <tr>
                                         <th>Locality Name</th>
-                                        <th>Mandal Name</th>
+                                        <th>Division Name</th>
                                         <th>Last Report Date</th>
                                         <th>Days Since Last Report</th>
                                         <th>Status</th>
@@ -155,7 +155,7 @@
                                         <tr>
                                             <td><c:out value="${village.name}"/></td>
                                             <td>
-                                                <c:out value="${village.mandal != null ? village.mandal.name : 'N/A'}"/>
+                                                <c:out value="${row.divisionName != null ? row.divisionName : 'N/A'}"/>
                                             </td>
                                             <td>
                                                 <c:out value="${row.lastReportDate != null ? row.lastReportDate : 'N/A'}"/>

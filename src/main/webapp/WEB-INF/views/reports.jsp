@@ -366,7 +366,6 @@
 </div>
 
     <script>
-<script>
     const chartColors = {
         blue: '#2563eb',
         green: '#22c55e',
