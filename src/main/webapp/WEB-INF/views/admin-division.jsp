@@ -98,13 +98,6 @@
                     <div class="stat-label" style="color:#fff;">Pending Complaints</div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="stat-card" style="background:#7f1d1d; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-exclamation-octagon-fill"></i></div>
-                    <div class="stat-value" style="color:#fff;">${criticalComplaints}</div>
-                    <div class="stat-label" style="color:#fff;">Critical Complaints</div>
-                </div>
-            </div>
         </div>
 
         <div class="row mb-3">

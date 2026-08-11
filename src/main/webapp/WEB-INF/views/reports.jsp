@@ -133,17 +133,6 @@
             <div class="col-md-6">
                 <div class="card form-card h-100">
                     <div class="card-body">
-                        <h5 class="section-title">Complaints by Priority</h5>
-                        <canvas id="priorityChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
-            <div class="col-md-6">
-                <div class="card form-card h-100">
-                    <div class="card-body">
                         <h5 class="section-title">Complaints by Administrative Division</h5>
                         <canvas id="divisionChart"></canvas>
                     </div>
@@ -154,17 +143,6 @@
                     <div class="card-body">
                         <h5 class="section-title">Monthly Complaint Trend</h5>
                         <canvas id="trendChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
-            <div class="col-md-6">
-                <div class="card form-card h-100">
-                    <div class="card-body">
-                        <h5 class="section-title">Locality Activity</h5>
-                        <canvas id="activityChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -202,57 +180,6 @@
                 </div>
             </div>
 
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-12">
-                <h3 class="section-title"><i class="bi bi-exclamation-triangle-fill" style="color:#7f1d1d;"></i> Recent Critical Complaints</h3>
-                <c:choose>
-                    <c:when test="${empty recentCritical}">
-                        <div class="empty-state">
-                                <span class="empty-state-icon"><i class="bi bi-shield-check"></i></span>
-                                <div class="empty-state-title">No critical complaints</div>
-                                <div class="empty-state-text">Great! There are no critical complaints at this time.</div>
-                            </div>
-                    </c:when>
-                    <c:otherwise>
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Complaint ID</th>
-                                        <th>Complaint Type</th>
-                                        <th>Division</th>
-                                        <th>Locality</th>
-                                        <th>Submitted By</th>
-                                        <th>Submitted Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="complaint" items="${recentCritical}">
-                                        <tr>
-                                            <td>${complaint.id}</td>
-                                            <td><c:out value="${complaint.type}"/></td>
-                                            <td>
-                                                <c:out value="${complaint.user.village.mandal != null ? complaint.user.village.mandal.name : 'N/A'}"/>
-                                            </td>
-                                            <td><c:out value="${complaint.user.village.name}"/></td>
-                                            <td><c:out value="${complaint.user.username}"/></td>
-                                            <td><c:out value="${complaint.createdAt}"/></td>
-                                            <td>
-                                                <a href="${pageContext.request.contextPath}/admin/complaints/${complaint.id}" class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-eye"></i> View Details
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
-                        </div>
-                    </c:otherwise>
-                </c:choose>
-            </div>
         </div>
 
         <div class="card form-card mb-3">
@@ -386,32 +313,6 @@
         }
     });
 
-    const activityLabels = [];
-    const activityData = [];
-    <c:forEach var="entry" items="${localityActivityMap}">
-        activityLabels.push('<c:out value="${entry.key}"/>');
-        activityData.push(${entry.value});
-    </c:forEach>
-    new Chart(document.getElementById('activityChart'), {
-        type: 'doughnut',
-        data: {
-            labels: activityLabels,
-            datasets: [{
-                data: activityData,
-                backgroundColor: [
-                    chartColors.green,
-                    chartColors.red
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
 </script>
     <script>
         function showToast(message, type) {

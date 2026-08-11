@@ -606,11 +606,6 @@ public class AdminDashboardController {
             topDivisions.add(row);
         }
 
-        List<Complaint> recentCritical = filteredComplaints.stream()
-                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .limit(10)
-                .toList();
-
         List<MandalReportItem> submittedDetails = buildSubmittedDetails();
         List<MandalReportItem> pendingDetails = buildPendingDetails();
 
