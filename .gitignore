@@ -10,6 +10,9 @@ target/
 *.classpath
 *.project
 
+# VS Code
+.vscode/
+
 # OS generated files
 .DS_Store
 Thumbs.db
