@@ -94,7 +94,7 @@
         <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
             <div class="col-6">
                 <a href="${pageContext.request.contextPath}/admin/reports/details?type=TOTAL" class="text-decoration-none d-block">
-                    <div class="stat-card" style="background:#2563eb; color:#fff; border-top:none;">
+                    <div class="stat-card" style="background:#22c55e; color:#fff; border-top:none;">
                         <div class="stat-icon" style="color:#fff;"><i class="bi bi-file-earmark-text"></i></div>
                         <div class="stat-value" style="color:#fff;">${totalComplaints}</div>
                         <div class="stat-label" style="color:#fff;">Total Complaints</div>
@@ -103,7 +103,7 @@
             </div>
             <div class="col-6">
                 <a href="${pageContext.request.contextPath}/admin/reports/details?type=PENDING" class="text-decoration-none d-block">
-                    <div class="stat-card" style="background:#f97316; color:#fff; border-top:none;">
+                    <div class="stat-card" style="background:#dc2626; color:#fff; border-top:none;">
                         <div class="stat-icon" style="color:#fff;"><i class="bi bi-exclamation-circle-fill"></i></div>
                         <div class="stat-value" style="color:#fff;">${pendingComplaints}</div>
                         <div class="stat-label" style="color:#fff;">Pending Complaints</div>
