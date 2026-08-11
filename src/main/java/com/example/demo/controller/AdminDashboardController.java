@@ -202,10 +202,6 @@ public class AdminDashboardController {
                 .orElseThrow(() -> new IllegalArgumentException("Division not found: " + id));
 
         List<Locality> localities = division.getLocalities();
-        long totalLocalities = localities.size();
-
-        long totalComplaints = 0;
-        long pendingComplaints = 0;
 
         java.util.Map<Long, java.time.LocalDateTime> lastSubmissionMap = new java.util.HashMap<>();
         java.util.Map<Long, String> statusMap = new java.util.HashMap<>();
@@ -243,9 +239,7 @@ public class AdminDashboardController {
                 localityComplaints = complaintRepository.findByUserVillage(matchedVillage);
             }
             complaintCountMap.put(locality.getId(), (long) localityComplaints.size());
-            totalComplaints += localityComplaints.size();
             if (localityComplaints.isEmpty()) {
-                pendingComplaints++;
                 statusMap.put(locality.getId(), "No Reports");
                 lastReportMap.put(locality.getId(), "Never");
             } else {
@@ -262,7 +256,6 @@ public class AdminDashboardController {
                     lastReportMap.put(locality.getId(), daysSince + " days ago");
                 }
                 if (daysSince > 14) {
-                    pendingComplaints++;
                     statusMap.put(locality.getId(), "Pending");
                 } else {
                     statusMap.put(locality.getId(), "Active");
@@ -272,9 +265,6 @@ public class AdminDashboardController {
 
         model.addAttribute("division", division);
         model.addAttribute("localities", sortedLocalities);
-        model.addAttribute("totalLocalities", totalLocalities);
-        model.addAttribute("totalComplaints", totalComplaints);
-        model.addAttribute("pendingComplaints", pendingComplaints);
         model.addAttribute("lastSubmissionMap", lastSubmissionMap);
         model.addAttribute("lastReportMap", lastReportMap);
         model.addAttribute("statusMap", statusMap);

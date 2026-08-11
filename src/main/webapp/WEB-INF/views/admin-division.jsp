@@ -67,39 +67,6 @@
             </div>
         </div>
 
-        <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
-            <div class="col-6">
-                <div class="stat-card" style="background:#2563eb; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-geo-alt"></i></div>
-                    <div class="stat-value" style="color:#fff;">${totalLocalities}</div>
-                    <div class="stat-label" style="color:#fff;">
-                        <c:choose>
-                            <c:when test="${division.type == 'MANDAL'}">Total Villages</c:when>
-                            <c:when test="${division.type == 'MUNICIPALITY' || division.type == 'CORPORATION' || division.type == 'NAGAR_PANCHAYAT'}">Total Wards</c:when>
-                            <c:otherwise>Total Localities</c:otherwise>
-                        </c:choose>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="stat-card" style="background:#f97316; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-file-earmark-text"></i></div>
-                    <div class="stat-value" style="color:#fff;">${totalComplaints}</div>
-                    <div class="stat-label" style="color:#fff;">Total Complaints</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
-            <div class="col-6">
-                <div class="stat-card" style="background:#dc2626; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-exclamation-circle-fill"></i></div>
-                    <div class="stat-value" style="color:#fff;">${pendingComplaints}</div>
-                    <div class="stat-label" style="color:#fff;">Pending Complaints</div>
-                </div>
-            </div>
-        </div>
-
         <div class="row mb-3">
             <div class="col-12">
                 <h3 class="section-title">
