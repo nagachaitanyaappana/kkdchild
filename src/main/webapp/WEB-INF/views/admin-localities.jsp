@@ -106,7 +106,7 @@
                     </a>
                 </div>
 
-                <c:set var="divisions" value="${groupedDivisions[selectedType]}"/>
+                <c:set var="divisions" value="${filteredDivisions}"/>
                 <c:if test="${empty divisions}">
                     <div class="text-center py-5">
                         <i class="bi bi-search" style="font-size:3rem; color:#ccc;"></i>

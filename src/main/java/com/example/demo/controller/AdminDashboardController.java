@@ -169,6 +169,18 @@ public class AdminDashboardController {
         long corporationCount = grouped.getOrDefault(com.example.demo.model.DivisionType.CORPORATION, List.of()).size();
         long nagarPanchayatCount = grouped.getOrDefault(com.example.demo.model.DivisionType.NAGAR_PANCHAYAT, List.of()).size();
 
+        List<Division> filteredDivisions = List.of();
+        if (type != null && !type.isBlank()) {
+            try {
+                com.example.demo.model.DivisionType selectedType = com.example.demo.model.DivisionType.valueOf(type);
+                filteredDivisions = divisions.stream()
+                        .filter(d -> d.getType() == selectedType)
+                        .toList();
+            } catch (IllegalArgumentException e) {
+                // ignore invalid type
+            }
+        }
+
         model.addAttribute("groupedDivisions", grouped);
         model.addAttribute("divisionTypes", com.example.demo.model.DivisionType.values());
         model.addAttribute("selectedType", type);
@@ -177,6 +189,7 @@ public class AdminDashboardController {
         model.addAttribute("corporationCount", corporationCount);
         model.addAttribute("nagarPanchayatCount", nagarPanchayatCount);
         model.addAttribute("divisionStats", divisionStats);
+        model.addAttribute("filteredDivisions", filteredDivisions);
         model.addAttribute("localityStatusMap", localityStatusMap);
         model.addAttribute("localityLastSubmissionMap", localityLastSubmissionMap);
         return "admin-localities";
