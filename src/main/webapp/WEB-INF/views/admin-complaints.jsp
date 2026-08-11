@@ -51,16 +51,6 @@
                         <input type="text" class="form-control" id="search" name="search" value="${search != null ? search : ''}" placeholder="ID, type, locality..."/>
                     </div>
                     <div class="col-md-3">
-                        <label for="priority" class="form-label">Priority</label>
-                        <select class="form-select" id="priority" name="priority">
-                            <option value="">All Priorities</option>
-                            <option value="LOW" ${selectedPriority == 'LOW' ? 'selected' : ''}>Low</option>
-                            <option value="MEDIUM" ${selectedPriority == 'MEDIUM' ? 'selected' : ''}>Medium</option>
-                            <option value="HIGH" ${selectedPriority == 'HIGH' ? 'selected' : ''}>High</option>
-                            <option value="CRITICAL" ${selectedPriority == 'CRITICAL' ? 'selected' : ''}>Critical</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
                         <label for="type" class="form-label">Complaint Type</label>
                         <select class="form-select" id="type" name="type">
                             <option value="">All Types</option>
@@ -167,7 +157,6 @@
                                         <th>Type</th>
                                         <th>Locality</th>
                                         <th>Submitted By</th>
-                                        <th>Priority</th>
                                         <th>Created Date</th>
                                         <th>Action</th>
                                     </tr>
@@ -179,25 +168,6 @@
                                             <td><c:out value="${complaint.type}"/></td>
                                             <td><c:out value="${complaint.user.village.name}"/></td>
                                             <td><c:out value="${complaint.user.username}"/></td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${complaint.priority == 'LOW'}">
-                                                        <span class="priority-badge priority-low">Low</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'MEDIUM'}">
-                                                        <span class="priority-badge priority-medium">Medium</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'HIGH'}">
-                                                        <span class="priority-badge priority-high">High</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'CRITICAL'}">
-                                                        <span class="priority-badge priority-critical">Critical</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="priority-badge priority-medium">Medium</span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
                                             <td><c:out value="${complaint.createdAt}"/></td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/admin/complaints/${complaint.id}" class="btn btn-sm btn-primary">

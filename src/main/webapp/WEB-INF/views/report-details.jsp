@@ -41,10 +41,10 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="section-title"><c:out value="${pageTitle}"/></h2>
             <div>
-                <a href="${pageContext.request.contextPath}/admin/reports/export/details/excel?type=${reportType}&division=${selectedDivisionId != null ? selectedDivisionId : ''}&locality=${selectedVillageId != null ? selectedVillageId : ''}&complaintType=${selectedType != null ? selectedType : ''}&priority=${selectedPriority != null ? selectedPriority : ''}&dateFrom=${dateFrom != null ? dateFrom : ''}&dateTo=${dateTo != null ? dateTo : ''}" class="btn btn-success btn-sm me-2">
+                <a href="${pageContext.request.contextPath}/admin/reports/export/details/excel?type=${reportType}&division=${selectedDivisionId != null ? selectedDivisionId : ''}&locality=${selectedVillageId != null ? selectedVillageId : ''}&complaintType=${selectedType != null ? selectedType : ''}dateFrom=${dateFrom != null ? dateFrom : ''}&dateTo=${dateTo != null ? dateTo : ''}" class="btn btn-success btn-sm me-2">
                     <i class="bi bi-file-earmark-excel"></i> Export Excel
                 </a>
-                <a href="${pageContext.request.contextPath}/admin/reports/export/details/pdf?type=${reportType}&division=${selectedDivisionId != null ? selectedDivisionId : ''}&locality=${selectedVillageId != null ? selectedVillageId : ''}&complaintType=${selectedType != null ? selectedType : ''}&priority=${selectedPriority != null ? selectedPriority : ''}&dateFrom=${dateFrom != null ? dateFrom : ''}&dateTo=${dateTo != null ? dateTo : ''}" class="btn btn-danger btn-sm me-2">
+                <a href="${pageContext.request.contextPath}/admin/reports/export/details/pdf?type=${reportType}&division=${selectedDivisionId != null ? selectedDivisionId : ''}&locality=${selectedVillageId != null ? selectedVillageId : ''}&complaintType=${selectedType != null ? selectedType : ''}dateFrom=${dateFrom != null ? dateFrom : ''}&dateTo=${dateTo != null ? dateTo : ''}" class="btn btn-danger btn-sm me-2">
                     <i class="bi bi-file-earmark-pdf"></i> Export PDF
                 </a>
                 <a href="${pageContext.request.contextPath}/admin/reports" class="btn btn-secondary btn-sm">
@@ -66,7 +66,6 @@
                                         <th>Locality Name</th>
                                         <th>Mandal Name</th>
                                         <th>Submitted By</th>
-                                        <th>Priority</th>
                                         <th>Created Date</th>
                                     </tr>
                                 </thead>
@@ -82,25 +81,6 @@
                                                 <c:out value="${complaint.user.village.mandal != null ? complaint.user.village.mandal.name : 'N/A'}"/>
                                             </td>
                                             <td><c:out value="${complaint.user.username}"/></td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${complaint.priority == 'LOW'}">
-                                                        <span class="priority-badge priority-low">Low</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'MEDIUM'}">
-                                                        <span class="priority-badge priority-medium">Medium</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'HIGH'}">
-                                                        <span class="priority-badge priority-high">High</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'CRITICAL'}">
-                                                        <span class="priority-badge priority-critical">Critical</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="priority-badge priority-medium">Medium</span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
                                             <td><c:out value="${complaint.createdAt}"/></td>
                                         </tr>
                                     </c:forEach>

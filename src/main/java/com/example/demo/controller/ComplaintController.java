@@ -70,9 +70,6 @@ public class ComplaintController {
         complaint.setContent(complaintContent);
         complaint.setType(type);
         complaint.setOtherType(otherType);
-        if (priority != null && !priority.isBlank()) {
-            complaint.setPriority(priority);
-        }
 
         if (createdAtStr != null && !createdAtStr.isBlank()) {
             try {
@@ -105,7 +102,6 @@ public class ComplaintController {
     @PreAuthorize("hasRole('LOCALITY_USER')")
     public String myComplaints(@AuthenticationPrincipal UserDetails userDetails,
                                @RequestParam(value = "type", required = false) String type,
-                               @RequestParam(value = "priority", required = false) String priority,
                                Model model) {
         User currentUser = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
@@ -115,7 +111,6 @@ public class ComplaintController {
             model.addAttribute("complaints", List.of());
             model.addAttribute("villageName", currentUser.getUsername());
             model.addAttribute("selectedType", type);
-            model.addAttribute("selectedPriority", priority);
             return "my-complaints";
         }
 
@@ -127,16 +122,9 @@ public class ComplaintController {
                     .collect(Collectors.toList());
         }
 
-        if (priority != null && !priority.isBlank()) {
-            complaints = complaints.stream()
-                    .filter(c -> priority.equals(c.getPriority()))
-                    .collect(Collectors.toList());
-        }
-
         model.addAttribute("complaints", complaints);
         model.addAttribute("villageName", village.getName());
         model.addAttribute("selectedType", type);
-        model.addAttribute("selectedPriority", priority);
         return "my-complaints";
     }
 

@@ -59,16 +59,6 @@
                             <option value="OTHER" ${selectedType == 'OTHER' ? 'selected' : ''}>Other</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label for="priority" class="form-label">Priority</label>
-                        <select class="form-select" id="priority" name="priority">
-                            <option value="">All Priorities</option>
-                            <option value="LOW" ${selectedPriority == 'LOW' ? 'selected' : ''}>Low</option>
-                            <option value="MEDIUM" ${selectedPriority == 'MEDIUM' ? 'selected' : ''}>Medium</option>
-                            <option value="HIGH" ${selectedPriority == 'HIGH' ? 'selected' : ''}>High</option>
-                            <option value="CRITICAL" ${selectedPriority == 'CRITICAL' ? 'selected' : ''}>Critical</option>
-                        </select>
-                    </div>
                     <div class="col-md-4 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="bi bi-funnel"></i> Filter
@@ -99,7 +89,6 @@
                                         <th>ID</th>
                                         <th>Type</th>
                                         <th>Description</th>
-                                        <th>Priority</th>
                                         <th>Submitted Date</th>
                                         <th>Action</th>
                                     </tr>
@@ -116,25 +105,6 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <c:out value="${complaint.content}"/>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${complaint.priority == 'LOW'}">
-                                                        <span class="priority-badge priority-low">Low</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'MEDIUM'}">
-                                                        <span class="priority-badge priority-medium">Medium</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'HIGH'}">
-                                                        <span class="priority-badge priority-high">High</span>
-                                                    </c:when>
-                                                    <c:when test="${complaint.priority == 'CRITICAL'}">
-                                                        <span class="priority-badge priority-critical">Critical</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="priority-badge priority-medium">Medium</span>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>

@@ -72,16 +72,6 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label for="priority" class="form-label">Priority</label>
-                        <select class="form-select" id="priority" name="priority">
-                            <option value="">All</option>
-                            <option value="LOW" ${selectedPriority == 'LOW' ? 'selected' : ''}>Low</option>
-                            <option value="MEDIUM" ${selectedPriority == 'MEDIUM' ? 'selected' : ''}>Medium</option>
-                            <option value="HIGH" ${selectedPriority == 'HIGH' ? 'selected' : ''}>High</option>
-                            <option value="CRITICAL" ${selectedPriority == 'CRITICAL' ? 'selected' : ''}>Critical</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
                         <label for="dateFrom" class="form-label">Date From</label>
                         <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="${dateFrom != null ? dateFrom : ''}"/>
                     </div>
@@ -123,46 +113,11 @@
         </div>
 
         <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
-            <div class="col-6">
-                <a href="${pageContext.request.contextPath}/admin/reports/details?type=MAJOR" class="text-decoration-none d-block">
-                    <div class="stat-card" style="background:#dc2626; color:#fff; border-top:none;">
-                        <div class="stat-icon" style="color:#fff;"><i class="bi bi-exclamation-octagon-fill"></i></div>
-                        <div class="stat-value" style="color:#fff;">${majorCases}</div>
-                        <div class="stat-label" style="color:#fff;">Major Complaints</div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6">
-                <a href="${pageContext.request.contextPath}/admin/reports/details?type=CRITICAL" class="text-decoration-none d-block">
-                    <div class="stat-card" style="background:#7f1d1d; color:#fff; border-top:none;">
-                        <div class="stat-icon" style="color:#fff;"><i class="bi bi-exclamation-triangle-fill"></i></div>
-                        <div class="stat-value" style="color:#fff;">${criticalComplaints}</div>
-                        <div class="stat-label" style="color:#fff;">Critical Complaints</div>
-                    </div>
-                </a>
-            </div>
+
         </div>
 
         <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
-            <div class="col-6">
-                <a href="${pageContext.request.contextPath}/admin/reports/details?type=TOTAL" class="text-decoration-none d-block">
-                    <div class="stat-card" style="background:#1d4ed8; color:#fff; border-top:none;">
-                        <div class="stat-icon" style="color:#fff;"><i class="bi bi-geo-alt"></i></div>
-                        <div class="stat-value" style="color:#fff;">${activeLocalities}</div>
-                        <div class="stat-label" style="color:#fff;">Active Localities</div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6">
-                <a href="${pageContext.request.contextPath}/admin/reports/details?type=INACTIVE_LOCALITIES" class="text-decoration-none d-block">
-                    <div class="stat-card" style="background:#7c3aed; color:#fff; border-top:none;">
-                        <div class="stat-icon" style="color:#fff;"><i class="bi bi-calendar-x"></i></div>
-                        <div class="stat-value" style="color:#fff;">${inactiveLocalities}</div>
-                        <div class="stat-label" style="color:#fff;">Inactive Localities</div>
-                    </div>
-                </a>
-            </div>
-        </div>
+
 
         <h2 class="section-title mb-4">District Analytics</h2>
 
@@ -246,38 +201,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card form-card mb-3">
-                    <div class="card-body">
-                        <h5 class="section-title"><i class="bi bi-exclamation-circle-fill"></i> Top 5 Inactive Localities</h5>
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Locality</th>
-                                        <th>Division</th>
-                                        <th>Days Since Last Submission</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="locality" items="${topInactiveLocalities}" varStatus="loop">
-                                        <tr>
-                                            <td>${loop.index + 1}. <c:out value="${locality.name}"/></td>
-                                            <td><c:out value="${locality.division}"/></td>
-                                            <td><c:out value="${locality.daysSince}"/></td>
-                                        </tr>
-                                    </c:forEach>
-                                    <c:if test="${empty topInactiveLocalities}">
-                                        <tr>
-                                            <td colspan="3" class="text-center">No data available.</td>
-                                        </tr>
-                                    </c:if>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
 
         <div class="row mb-3">
@@ -391,35 +315,6 @@
                     chartColors.blue, chartColors.green, chartColors.orange,
                     chartColors.red, chartColors.purple, chartColors.yellow,
                     '#1e40af', '#15803d'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-
-    const priorityLabels = [];
-    const priorityData = [];
-    <c:forEach var="entry" items="${complaintsByPriority}">
-        priorityLabels.push('<c:out value="${entry.key}"/>');
-        priorityData.push(${entry.value});
-    </c:forEach>
-    new Chart(document.getElementById('priorityChart'), {
-        type: 'doughnut',
-        data: {
-            labels: priorityLabels,
-            datasets: [{
-                data: priorityData,
-                backgroundColor: [
-                    chartColors.yellow,
-                    chartColors.orange,
-                    chartColors.red,
-                    chartColors.purple
                 ]
             }]
         },

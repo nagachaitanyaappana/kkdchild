@@ -67,20 +67,6 @@
                         <h5 class="section-title mb-0">
                             <i class="bi bi-person-circle"></i> <c:out value="${complaint.user.username}"/>
                         </h5>
-                        <c:choose>
-                            <c:when test="${complaint.priority == 'LOW'}">
-                                <span class="priority-badge priority-low">Low</span>
-                            </c:when>
-                            <c:when test="${complaint.priority == 'MEDIUM'}">
-                                <span class="priority-badge priority-medium">Medium</span>
-                            </c:when>
-                            <c:when test="${complaint.priority == 'HIGH'}">
-                                <span class="priority-badge priority-high">High</span>
-                            </c:when>
-                            <c:when test="${complaint.priority == 'CRITICAL'}">
-                                <span class="priority-badge priority-critical">Critical</span>
-                            </c:when>
-                        </c:choose>
                     </div>
                     <p class="text-muted mb-2">
                         <strong>Complaint Type:</strong> <c:out value="${complaint.type}"/>

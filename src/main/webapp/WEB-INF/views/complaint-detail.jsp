@@ -48,25 +48,7 @@
                     <div class="col-md-6">
                         <strong>Complaint ID:</strong> <c:out value="${complaint.id}"/>
                     </div>
-                    <div class="col-md-6 text-end">
-                        <c:choose>
-                            <c:when test="${complaint.priority == 'LOW'}">
-                                <span class="priority-badge priority-low">Low</span>
-                            </c:when>
-                            <c:when test="${complaint.priority == 'MEDIUM'}">
-                                <span class="priority-badge priority-medium">Medium</span>
-                            </c:when>
-                            <c:when test="${complaint.priority == 'HIGH'}">
-                                <span class="priority-badge priority-high">High</span>
-                            </c:when>
-                            <c:when test="${complaint.priority == 'CRITICAL'}">
-                                <span class="priority-badge priority-critical">Critical</span>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="priority-badge priority-medium">Medium</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
+
                 </div>
 
                 <div class="mb-3">

@@ -235,7 +235,6 @@ public class AdminDashboardController {
 
         long totalComplaints = 0;
         long pendingComplaints = 0;
-        long criticalComplaints = 0;
 
         java.util.Map<Long, java.time.LocalDateTime> lastSubmissionMap = new java.util.HashMap<>();
         java.util.Map<Long, String> statusMap = new java.util.HashMap<>();
@@ -297,11 +296,6 @@ public class AdminDashboardController {
                 } else {
                     statusMap.put(locality.getId(), "Active");
                 }
-                for (Complaint c : localityComplaints) {
-                    if ("CRITICAL".equalsIgnoreCase(c.getPriority())) {
-                        criticalComplaints++;
-                    }
-                }
             }
         }
 
@@ -310,7 +304,6 @@ public class AdminDashboardController {
         model.addAttribute("totalLocalities", totalLocalities);
         model.addAttribute("totalComplaints", totalComplaints);
         model.addAttribute("pendingComplaints", pendingComplaints);
-        model.addAttribute("criticalComplaints", criticalComplaints);
         model.addAttribute("lastSubmissionMap", lastSubmissionMap);
         model.addAttribute("lastReportMap", lastReportMap);
         model.addAttribute("statusMap", statusMap);
@@ -493,7 +486,6 @@ public class AdminDashboardController {
             @RequestParam(value = "division", required = false) Long divisionId,
             @RequestParam(value = "locality", required = false) Long localityId,
             @RequestParam(value = "type", required = false) String type,
-            @RequestParam(value = "priority", required = false) String priority,
             @RequestParam(value = "dateFrom", required = false) String dateFrom,
             @RequestParam(value = "dateTo", required = false) String dateTo,
             Model model) {
@@ -535,12 +527,6 @@ public class AdminDashboardController {
             );
         }
 
-        if (priority != null && !priority.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(cb.lower(root.get("priority")), priority.toLowerCase())
-            );
-        }
-
         if (dateFrom != null && !dateFrom.isBlank()) {
             java.time.LocalDate from = java.time.LocalDate.parse(dateFrom);
             spec = spec.and((root, query, cb) ->
@@ -567,45 +553,9 @@ public class AdminDashboardController {
                 .filter(v -> complaintRepository.countByUserVillage(v) == 0)
                 .count();
 
-        long majorCases = filteredComplaints.stream()
-                .filter(c -> "HIGH".equalsIgnoreCase(c.getType()) || "CRITICAL".equalsIgnoreCase(c.getType()))
-                .count();
-
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-        long recentComplaints = filteredComplaints.stream()
-                .filter(c -> c.getCreatedAt() != null && !c.getCreatedAt().isBefore(sevenDaysAgo))
-                .count();
-
-        long criticalComplaints = filteredComplaints.stream()
-                .filter(c -> "CRITICAL".equalsIgnoreCase(c.getPriority()))
-                .count();
-
-        long activeLocalities = allVillages.stream()
-                .filter(v -> complaintRepository.countByUserVillage(v) > 0)
-                .count();
-
-        long inactiveLocalities = allVillages.stream()
-                .filter(v -> {
-                    List<Complaint> vComplaints = complaintRepository.findByUser_Village_Id(v.getId());
-                    if (vComplaints.isEmpty()) return true;
-                    long daysSince = java.time.temporal.ChronoUnit.DAYS.between(
-                            vComplaints.get(0).getCreatedAt().toLocalDate(),
-                            java.time.LocalDate.now()
-                    );
-                    return daysSince > 14;
-                })
-                .count();
-
         java.util.Map<String, Long> complaintsByType = filteredComplaints.stream()
                 .collect(java.util.stream.Collectors.groupingBy(
                         c -> c.getType() != null ? c.getType() : "UNKNOWN",
-                        java.util.stream.Collectors.counting()
-                ));
-
-        java.util.Map<String, Long> complaintsByPriority = filteredComplaints.stream()
-                .filter(c -> c.getPriority() != null)
-                .collect(java.util.stream.Collectors.groupingBy(
-                        Complaint::getPriority,
                         java.util.stream.Collectors.counting()
                 ));
 
@@ -648,11 +598,6 @@ public class AdminDashboardController {
             monthlyTrend.put(monthStart.format(java.time.format.DateTimeFormatter.ofPattern("MMM yyyy")), count);
         }
 
-        long topDivisionsCount = activeLocalities + inactiveLocalities;
-        java.util.Map<String, Long> localityActivityMap = new java.util.LinkedHashMap<>();
-        localityActivityMap.put("Active Localities", activeLocalities);
-        localityActivityMap.put("Inactive Localities", inactiveLocalities);
-
         List<Map<String, Object>> topDivisions = new java.util.ArrayList<>();
         for (java.util.Map.Entry<String, Long> entry : complaintsByDivision.entrySet().stream().limit(5).toList()) {
             Map<String, Object> row = new java.util.HashMap<>();
@@ -661,29 +606,7 @@ public class AdminDashboardController {
             topDivisions.add(row);
         }
 
-        List<Map<String, Object>> topInactiveLocalities = new java.util.ArrayList<>();
-        for (Village v : allVillages) {
-            List<Complaint> vComplaints = complaintRepository.findByUser_Village_Id(v.getId());
-            if (vComplaints.isEmpty()) continue;
-            long daysSince = java.time.temporal.ChronoUnit.DAYS.between(
-                    vComplaints.get(0).getCreatedAt().toLocalDate(),
-                    java.time.LocalDate.now()
-            );
-            if (daysSince > 14) {
-                Map<String, Object> row = new java.util.HashMap<>();
-                row.put("name", v.getName());
-                row.put("division", v.getMandal() != null ? v.getMandal().getName() : "N/A");
-                row.put("daysSince", daysSince);
-                topInactiveLocalities.add(row);
-            }
-        }
-        topInactiveLocalities.sort((a, b) -> Long.compare((Long) b.get("daysSince"), (Long) a.get("daysSince")));
-        if (topInactiveLocalities.size() > 5) {
-            topInactiveLocalities = topInactiveLocalities.subList(0, 5);
-        }
-
         List<Complaint> recentCritical = filteredComplaints.stream()
-                .filter(c -> "CRITICAL".equalsIgnoreCase(c.getPriority()))
                 .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
                 .limit(10)
                 .toList();
@@ -697,32 +620,17 @@ public class AdminDashboardController {
         model.addAttribute("pendingVillages", pendingVillages);
         model.addAttribute("totalComplaints", totalComplaints);
         model.addAttribute("pendingComplaints", pendingComplaints);
-        model.addAttribute("majorCases", majorCases);
-        model.addAttribute("criticalComplaints", criticalComplaints);
-        model.addAttribute("activeLocalities", activeLocalities);
-        model.addAttribute("inactiveLocalities", inactiveLocalities);
         model.addAttribute("complaintsByType", complaintsByType);
         model.addAttribute("submittedDetails", submittedDetails);
         model.addAttribute("pendingDetails", pendingDetails);
 
-        model.addAttribute("complaintsByPriority", complaintsByPriority);
         model.addAttribute("complaintsByDivision", complaintsByDivision);
         model.addAttribute("monthlyTrend", monthlyTrend);
-        model.addAttribute("localityActivityMap", localityActivityMap);
         model.addAttribute("topDivisions", topDivisions);
-        model.addAttribute("topInactiveLocalities", topInactiveLocalities);
-        model.addAttribute("recentCritical", recentCritical);
 
-        model.addAttribute("allDivisions", allDivisions);
-        model.addAttribute("allVillages", allVillages);
-        model.addAttribute("complaintTypes", List.of(
-            "CHILD_MARRIAGE", "POCSO", "CHILD_LABOUR", "SCHOOL_DROPOUTS",
-            "CHILD_NEGLIGENCY", "HIV_INFECTION", "ORPHANS", "OTHER"
-        ));
         model.addAttribute("selectedDivisionId", divisionId);
         model.addAttribute("selectedVillageId", localityId);
         model.addAttribute("selectedType", type);
-        model.addAttribute("selectedPriority", priority);
         model.addAttribute("dateFrom", dateFrom);
         model.addAttribute("dateTo", dateTo);
 
@@ -733,7 +641,6 @@ public class AdminDashboardController {
     @GetMapping("/complaints")
     public String adminComplaints(
             @RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "priority", required = false) String priority,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "villageId", required = false) Long villageId,
             @RequestParam(value = "complaintId", required = false) String complaintId,
@@ -754,12 +661,6 @@ public class AdminDashboardController {
                     cb.like(cb.lower(root.get("user").get("village").get("name")), like)
                 );
             });
-        }
-
-        if (priority != null && !priority.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(cb.lower(root.get("priority")), priority.toLowerCase())
-            );
         }
 
         if (type != null && !type.isBlank()) {
@@ -809,7 +710,6 @@ public class AdminDashboardController {
         List<Complaint> complaints = complaintRepository.findAll(spec);
 
         java.util.List<String> activeFilters = new java.util.ArrayList<>();
-        if (priority != null && !priority.isBlank()) activeFilters.add("Priority: " + priority);
         if (type != null && !type.isBlank()) activeFilters.add("Type: " + type);
         if (villageId != null) {
             Village v = villageRepository.findById(villageId).orElse(null);
@@ -822,7 +722,6 @@ public class AdminDashboardController {
 
         model.addAttribute("complaints", complaints);
         model.addAttribute("search", search);
-        model.addAttribute("selectedPriority", priority);
         model.addAttribute("selectedType", type);
         model.addAttribute("selectedVillageId", villageId);
         model.addAttribute("complaintId", complaintId);
@@ -955,7 +854,6 @@ public class AdminDashboardController {
             @RequestParam(value = "division", required = false) Long divisionId,
             @RequestParam(value = "locality", required = false) Long localityId,
             @RequestParam(value = "filterType", required = false) String filterType,
-            @RequestParam(value = "priority", required = false) String filterPriority,
             @RequestParam(value = "dateFrom", required = false) String dateFrom,
             @RequestParam(value = "dateTo", required = false) String dateTo,
             Model model) {
@@ -964,7 +862,6 @@ public class AdminDashboardController {
         model.addAttribute("selectedDivisionId", divisionId);
         model.addAttribute("selectedVillageId", localityId);
         model.addAttribute("selectedType", filterType);
-        model.addAttribute("selectedPriority", filterPriority);
         model.addAttribute("dateFrom", dateFrom);
         model.addAttribute("dateTo", dateTo);
 
@@ -1001,13 +898,7 @@ public class AdminDashboardController {
             );
         }
 
-        if (filterPriority != null && !filterPriority.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(cb.lower(root.get("priority")), filterPriority.toLowerCase())
-            );
-        }
-
-        if (dateFrom != null && !dateFrom.isBlank()) {
+                if (dateFrom != null && !dateFrom.isBlank()) {
             java.time.LocalDate from = java.time.LocalDate.parse(dateFrom);
             spec = spec.and((root, query, cb) ->
                 cb.greaterThanOrEqualTo(root.get("createdAt"), from.atStartOfDay())
@@ -1087,45 +978,7 @@ public class AdminDashboardController {
                 model.addAttribute("pendingLocalities", pendingLocalities);
                 model.addAttribute("pageTitle", "Pending Localities");
             }
-            case "INACTIVE_LOCALITIES" -> {
-                List<Village> allVillages2 = villageRepository.findAll();
-                List<Map<String, Object>> inactiveLocalities = new ArrayList<>();
-                for (Village v : allVillages2) {
-                    List<Complaint> vComplaints = getLatestComplaintsForVillage(v);
-                    Map<String, Object> row = new java.util.HashMap<>();
-                    row.put("village", v);
-                    row.put("divisionName", getDivisionNameForVillage(v));
-                    if (!vComplaints.isEmpty()) {
-                        Complaint latestComplaint = vComplaints.get(0);
-                        row.put("lastReportDate", latestComplaint.getCreatedAt());
-                        long daysSince = java.time.temporal.ChronoUnit.DAYS.between(
-                                latestComplaint.getCreatedAt().toLocalDate(),
-                                java.time.LocalDate.now()
-                        );
-                        row.put("daysSince", daysSince);
-                        row.put("status", getLocalityStatusForReport(vComplaints, true));
-                        if (daysSince > 14) {
-                            inactiveLocalities.add(row);
-                        }
-                    } else {
-                        row.put("lastReportDate", null);
-                        row.put("daysSince", null);
-                        row.put("status", "No Reports");
-                        inactiveLocalities.add(row);
-                    }
-                }
-                inactiveLocalities.sort((a, b) -> {
-                    Long daysA = (Long) a.get("daysSince");
-                    Long daysB = (Long) b.get("daysSince");
-                    if (daysA == null && daysB == null) return 0;
-                    if (daysA == null) return 1;
-                    if (daysB == null) return -1;
-                    return Long.compare(daysB, daysA);
-                });
-                model.addAttribute("pendingLocalities", inactiveLocalities);
-                model.addAttribute("pageTitle", "Inactive Localities");
-            }
-            default -> {
+default -> {
                 model.addAttribute("complaints", List.of());
                 model.addAttribute("pageTitle", "Unknown Report");
             }
@@ -1140,7 +993,6 @@ public class AdminDashboardController {
             @RequestParam(value = "division", required = false) Long divisionId,
             @RequestParam(value = "locality", required = false) Long localityId,
             @RequestParam(value = "complaintType", required = false) String complaintType,
-            @RequestParam(value = "priority", required = false) String filterPriority,
             @RequestParam(value = "dateFrom", required = false) String dateFrom,
             @RequestParam(value = "dateTo", required = false) String dateTo) throws Exception {
 
@@ -1177,13 +1029,7 @@ public class AdminDashboardController {
             );
         }
 
-        if (filterPriority != null && !filterPriority.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(cb.lower(root.get("priority")), filterPriority.toLowerCase())
-            );
-        }
-
-        if (dateFrom != null && !dateFrom.isBlank()) {
+                if (dateFrom != null && !dateFrom.isBlank()) {
             java.time.LocalDate from = java.time.LocalDate.parse(dateFrom);
             spec = spec.and((root, query, cb) ->
                 cb.greaterThanOrEqualTo(root.get("createdAt"), from.atStartOfDay())
@@ -1230,7 +1076,7 @@ public class AdminDashboardController {
                             c.getUser() != null && c.getUser().getVillage() != null ? c.getUser().getVillage().getName() : "",
                             mandalName,
                             c.getUser() != null ? c.getUser().getUsername() : "",
-                            c.getPriority() != null ? c.getPriority() : "",
+                            
                             c.getCreatedAt() != null ? c.getCreatedAt().toString() : ""
                     });
                 }
@@ -1293,7 +1139,6 @@ public class AdminDashboardController {
         if (divisionId != null) activeFilters.add("Division: " + (divisionRepository.findById(divisionId).orElse(null) != null ? divisionRepository.findById(divisionId).get().getName() : ""));
         if (localityId != null) activeFilters.add("Locality: " + (villageRepository.findById(localityId).orElse(null) != null ? villageRepository.findById(localityId).get().getName() : ""));
         if (complaintType != null && !complaintType.isBlank()) activeFilters.add("Type: " + complaintType);
-        if (filterPriority != null && !filterPriority.isBlank()) activeFilters.add("Priority: " + filterPriority);
         if (dateFrom != null && !dateFrom.isBlank()) activeFilters.add("Date From: " + dateFrom);
         if (dateTo != null && !dateTo.isBlank()) activeFilters.add("Date To: " + dateTo);
 
@@ -1343,7 +1188,6 @@ public class AdminDashboardController {
             @RequestParam(value = "division", required = false) Long divisionId,
             @RequestParam(value = "locality", required = false) Long localityId,
             @RequestParam(value = "type", required = false) String filterType,
-            @RequestParam(value = "priority", required = false) String filterPriority,
             @RequestParam(value = "dateFrom", required = false) String dateFrom,
             @RequestParam(value = "dateTo", required = false) String dateTo) throws Exception {
 
@@ -1380,13 +1224,7 @@ public class AdminDashboardController {
             );
         }
 
-        if (filterPriority != null && !filterPriority.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(cb.lower(root.get("priority")), filterPriority.toLowerCase())
-            );
-        }
-
-        if (dateFrom != null && !dateFrom.isBlank()) {
+                if (dateFrom != null && !dateFrom.isBlank()) {
             java.time.LocalDate from = java.time.LocalDate.parse(dateFrom);
             spec = spec.and((root, query, cb) ->
                 cb.greaterThanOrEqualTo(root.get("createdAt"), from.atStartOfDay())
@@ -1419,7 +1257,6 @@ public class AdminDashboardController {
         if (divisionId != null) activeFilters.add("Division: " + (divisionRepository.findById(divisionId).orElse(null) != null ? divisionRepository.findById(divisionId).get().getName() : ""));
         if (localityId != null) activeFilters.add("Locality: " + (villageRepository.findById(localityId).orElse(null) != null ? villageRepository.findById(localityId).get().getName() : ""));
         if (filterType != null && !filterType.isBlank()) activeFilters.add("Type: " + filterType);
-        if (filterPriority != null && !filterPriority.isBlank()) activeFilters.add("Priority: " + filterPriority);
         if (dateFrom != null && !dateFrom.isBlank()) activeFilters.add("Date From: " + dateFrom);
         if (dateTo != null && !dateTo.isBlank()) activeFilters.add("Date To: " + dateTo);
 
@@ -1464,7 +1301,7 @@ public class AdminDashboardController {
                             c.getUser() != null && c.getUser().getVillage() != null ? c.getUser().getVillage().getName() : "",
                             mandalName,
                             c.getUser() != null ? c.getUser().getUsername() : "",
-                            c.getPriority() != null ? c.getPriority() : "",
+                            
                             c.getCreatedAt() != null ? c.getCreatedAt().toString() : ""
                     });
                 }

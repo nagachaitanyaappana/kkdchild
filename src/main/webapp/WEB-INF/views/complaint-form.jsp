@@ -92,16 +92,6 @@
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="complaintPriority" class="form-label">Priority</label>
-                        <select class="form-select" id="complaintPriority" name="priority">
-                            <option value="LOW">Low</option>
-                            <option value="MEDIUM" selected>Medium</option>
-                            <option value="HIGH">High</option>
-                            <option value="CRITICAL">Critical</option>
-                        </select>
-                    </div>
-
                     <div class="mb-3" id="otherTypeGroup" style="display:none;">
                         <label for="otherType" class="form-label">Specify Issue Type</label>
                         <input type="text" class="form-control" id="otherType" name="otherType" placeholder="e.g. Child missing from home"/>
@@ -278,7 +268,6 @@
         formData.append('complaintContent', complaintContent);
         formData.append('type', type);
         formData.append('otherType', otherType);
-        formData.append('priority', document.getElementById('complaintPriority').value);
         filesToSubmit.forEach(file => formData.append('photos', file));
 
         const headers = {};
