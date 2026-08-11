@@ -94,9 +94,7 @@ public class AdminDashboardController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/localities")
     public String adminLocalities(
-            @RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "divisionType", required = false) String divisionType,
-            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "type", required = false) String type,
             Model model) {
 
         List<Division> divisions = divisionRepository.findAll();
@@ -140,53 +138,15 @@ public class AdminDashboardController {
         java.util.Map<com.example.demo.model.DivisionType, List<Division>> grouped = divisions.stream()
                 .collect(java.util.stream.Collectors.groupingBy(Division::getType));
 
-        if (divisionType != null && !divisionType.isBlank()) {
+        if (type != null && !type.isBlank()) {
             try {
-                com.example.demo.model.DivisionType type = com.example.demo.model.DivisionType.valueOf(divisionType);
+                com.example.demo.model.DivisionType selectedType = com.example.demo.model.DivisionType.valueOf(type);
                 grouped = grouped.entrySet().stream()
-                        .filter(e -> e.getKey() == type)
+                        .filter(e -> e.getKey() == selectedType)
                         .collect(java.util.stream.Collectors.toMap(java.util.Map.Entry::getKey, java.util.Map.Entry::getValue));
             } catch (IllegalArgumentException e) {
                 // ignore invalid type
             }
-        }
-
-        if (status != null && !status.isBlank() && !"ALL".equalsIgnoreCase(status)) {
-            java.util.Map<com.example.demo.model.DivisionType, List<Division>> statusFiltered = new java.util.HashMap<>();
-            for (java.util.Map.Entry<com.example.demo.model.DivisionType, List<Division>> entry : grouped.entrySet()) {
-                List<Division> matched = entry.getValue().stream()
-                        .filter(d -> d.getLocalities().stream()
-                                .anyMatch(l -> status.equalsIgnoreCase(localityStatusMap.get(l.getId()))))
-                        .toList();
-                if (!matched.isEmpty()) {
-                    statusFiltered.put(entry.getKey(), matched);
-                }
-            }
-            grouped = statusFiltered;
-        }
-
-        if (search != null && !search.isBlank()) {
-            String term = search.toLowerCase();
-            java.util.Map<com.example.demo.model.DivisionType, List<Division>> filtered = new java.util.HashMap<>();
-            for (java.util.Map.Entry<com.example.demo.model.DivisionType, List<Division>> entry : grouped.entrySet()) {
-                List<Division> matched = entry.getValue().stream()
-                        .filter(d -> d.getName().toLowerCase().contains(term))
-                        .toList();
-                if (matched.isEmpty()) {
-                    for (Division d : entry.getValue()) {
-                        boolean hasLocality = d.getLocalities().stream()
-                                .anyMatch(l -> l.getName().toLowerCase().contains(term));
-                        if (hasLocality) {
-                            matched = List.of(d);
-                            break;
-                        }
-                    }
-                }
-                if (!matched.isEmpty()) {
-                    filtered.put(entry.getKey(), matched);
-                }
-            }
-            grouped = filtered;
         }
 
         java.util.Map<Long, Long> divisionStats = new java.util.HashMap<>();
@@ -211,9 +171,7 @@ public class AdminDashboardController {
 
         model.addAttribute("groupedDivisions", grouped);
         model.addAttribute("divisionTypes", com.example.demo.model.DivisionType.values());
-        model.addAttribute("search", search);
-        model.addAttribute("selectedDivisionType", divisionType);
-        model.addAttribute("selectedStatus", status != null ? status : "ALL");
+        model.addAttribute("selectedType", type);
         model.addAttribute("mandalCount", mandalCount);
         model.addAttribute("municipalityCount", municipalityCount);
         model.addAttribute("corporationCount", corporationCount);

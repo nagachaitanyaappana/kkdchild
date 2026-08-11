@@ -41,56 +41,6 @@
 
         <h1 class="section-title mb-4">Overall Reports</h1>
 
-        <div class="card form-card mb-4">
-            <div class="card-body">
-                <form method="get" action="${pageContext.request.contextPath}/admin/reports" class="row g-3">
-                    <div class="col-md-3">
-                        <label for="division" class="form-label">Division</label>
-                        <select class="form-select" id="division" name="division">
-                            <option value="">All Divisions</option>
-                            <c:forEach var="d" items="${allDivisions}">
-                                <option value="${d.id}" ${selectedDivisionId == d.id ? 'selected' : ''}>${d.name}</option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="locality" class="form-label">Locality</label>
-                        <select class="form-select" id="locality" name="locality">
-                            <option value="">All Localities</option>
-                            <c:forEach var="village" items="${allVillages}">
-                                <option value="${village.id}" ${selectedVillageId == village.id ? 'selected' : ''}>${village.name}</option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="type" class="form-label">Complaint Type</label>
-                        <select class="form-select" id="type" name="type">
-                            <option value="">All Types</option>
-                            <c:forEach var="t" items="${complaintTypes}">
-                                <option value="${t}" ${selectedType == t ? 'selected' : ''}>${t}</option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="dateFrom" class="form-label">Date From</label>
-                        <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="${dateFrom != null ? dateFrom : ''}"/>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="dateTo" class="form-label">Date To</label>
-                        <input type="date" class="form-control" id="dateTo" name="dateTo" value="${dateTo != null ? dateTo : ''}"/>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary me-2">
-                            <i class="bi bi-search"></i> Apply Filters
-                        </button>
-                        <a href="${pageContext.request.contextPath}/admin/reports" class="btn btn-secondary">
-                            <i class="bi bi-arrow-counterclockwise"></i> Reset
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
             <div class="col-6">
                 <a href="${pageContext.request.contextPath}/admin/reports/details?type=TOTAL" class="text-decoration-none d-block">

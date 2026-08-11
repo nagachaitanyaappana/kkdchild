@@ -58,7 +58,6 @@ public class ComplaintController {
                                   @RequestParam(value = "createdAt", required = false) String createdAtStr,
                                   @RequestParam(value = "type", required = false) String type,
                                   @RequestParam(value = "otherType", required = false) String otherType,
-                                  @RequestParam(value = "priority", required = false) String priority,
                                   @AuthenticationPrincipal UserDetails userDetails,
                                   Model model) throws IOException {
 
@@ -101,7 +100,6 @@ public class ComplaintController {
     @GetMapping("/complaints/my")
     @PreAuthorize("hasRole('LOCALITY_USER')")
     public String myComplaints(@AuthenticationPrincipal UserDetails userDetails,
-                               @RequestParam(value = "type", required = false) String type,
                                Model model) {
         User currentUser = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
@@ -110,21 +108,13 @@ public class ComplaintController {
         if (village == null) {
             model.addAttribute("complaints", List.of());
             model.addAttribute("villageName", currentUser.getUsername());
-            model.addAttribute("selectedType", type);
             return "my-complaints";
         }
 
         List<Complaint> complaints = complaintRepository.findByUser_Village_Id(village.getId());
 
-        if (type != null && !type.isBlank()) {
-            complaints = complaints.stream()
-                    .filter(c -> type.equals(c.getType()))
-                    .collect(Collectors.toList());
-        }
-
         model.addAttribute("complaints", complaints);
         model.addAttribute("villageName", village.getName());
-        model.addAttribute("selectedType", type);
         return "my-complaints";
     }
 

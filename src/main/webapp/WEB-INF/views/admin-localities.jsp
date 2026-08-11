@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,130 +41,98 @@
     <div id="main-content" class="page-content container mt-4 mb-5">
         <div class="text-center mb-4">
             <h1 class="section-title">Administrative Divisions</h1>
-            <p class="text-muted mb-0">Browse Mandals, Municipalities, Corporation and Nagar Panchayats in Kakinada District.</p>
+            <p class="text-muted mb-0">Select a category to view its divisions.</p>
         </div>
 
-        <div class="row g-3 mb-4" style="display:flex; flex-wrap:wrap;">
-            <div class="col-6 col-md-3">
-                <div class="stat-card" style="background:#2563eb; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-map"></i></div>
-                    <div class="stat-value" style="color:#fff;">${mandalCount}</div>
-                    <div class="stat-label" style="color:#fff;">Mandals</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card" style="background:#f97316; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-building"></i></div>
-                    <div class="stat-value" style="color:#fff;">${municipalityCount}</div>
-                    <div class="stat-label" style="color:#fff;">Municipalities</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card" style="background:#dc2626; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-building-fill"></i></div>
-                    <div class="stat-value" style="color:#fff;">${corporationCount}</div>
-                    <div class="stat-label" style="color:#fff;">Corporation</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card" style="background:#7c3aed; color:#fff; border-top:none;">
-                    <div class="stat-icon" style="color:#fff;"><i class="bi bi-house-fill"></i></div>
-                    <div class="stat-value" style="color:#fff;">${nagarPanchayatCount}</div>
-                    <div class="stat-label" style="color:#fff;">Nagar Panchayat</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card form-card mb-4">
-            <div class="card-body">
-                <form method="get" action="${pageContext.request.contextPath}/admin/localities" class="row g-3">
-                    <div class="col-md-3">
-                        <label for="divisionType" class="form-label">Division Type</label>
-                        <select class="form-select" id="divisionType" name="divisionType">
-                            <option value="">All Types</option>
-                            <c:forEach var="type" items="${divisionTypes}">
-                                <option value="${type}" ${selectedDivisionType == type.toString() ? 'selected' : ''}>
-                                    <c:choose>
-                                        <c:when test="${type == 'MANDAL'}">Mandal</c:when>
-                                        <c:when test="${type == 'MUNICIPALITY'}">Municipality</c:when>
-                                        <c:when test="${type == 'CORPORATION'}">Corporation</c:when>
-                                        <c:when test="${type == 'NAGAR_PANCHAYAT'}">Nagar Panchayat</c:when>
-                                        <c:otherwise><c:out value="${type}"/></c:otherwise>
-                                    </c:choose>
-                                </option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select" id="status" name="status">
-                            <option value="ALL" ${selectedStatus == 'ALL' ? 'selected' : ''}>All</option>
-                            <option value="Active" ${selectedStatus == 'Active' ? 'selected' : ''}>Active</option>
-                            <option value="Pending" ${selectedStatus == 'Pending' ? 'selected' : ''}>Pending</option>
-                            <option value="No Reports" ${selectedStatus == 'No Reports' ? 'selected' : ''}>No Reports</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="search" class="form-label">Search</label>
-                        <input type="text" class="form-control" id="search" name="search" value="${search != null ? search : ''}" placeholder="Division name or locality name..."/>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary me-2" id="searchLocalitiesBtn" onclick="setLoading('searchLocalitiesBtn', true)">
-                            <i class="bi bi-search"></i> Search
-                        </button>
-                        <a href="${pageContext.request.contextPath}/admin/localities" class="btn btn-secondary">
-                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+        <c:choose>
+            <c:when test="${empty selectedType}">
+                <div class="row g-4 mb-4" style="display:flex; flex-wrap:wrap;">
+                    <div class="col-6 col-md-3">
+                        <a href="${pageContext.request.contextPath}/admin/localities?type=MANDAL" class="text-decoration-none d-block">
+                            <div class="stat-card" style="background:#2563eb; color:#fff; border-top:none;">
+                                <div class="stat-icon" style="color:#fff;"><i class="bi bi-map"></i></div>
+                                <div class="stat-value" style="color:#fff;">${mandalCount}</div>
+                                <div class="stat-label" style="color:#fff;">Mandals</div>
+                                <div class="small text-white-50">View Mandals &rarr;</div>
+                            </div>
                         </a>
                     </div>
-                </form>
-            </div>
-        </div>
-
-        <c:set var="hasAnyDivisions" value="false"/>
-        <c:forEach var="type" items="${divisionTypes}">
-            <c:set var="divisions" value="${groupedDivisions[type]}"/>
-            <c:if test="${not empty divisions}">
-                <c:set var="hasAnyDivisions" value="true"/>
-                <h3 class="section-title mb-3">
-                    <c:choose>
-                        <c:when test="${type == 'MANDAL'}">Mandals</c:when>
-                        <c:when test="${type == 'MUNICIPALITY'}">Municipalities</c:when>
-                        <c:when test="${type == 'CORPORATION'}">Corporation</c:when>
-                        <c:when test="${type == 'NAGAR_PANCHAYAT'}">Nagar Panchayat</c:when>
-                        <c:otherwise><c:out value="${type}"/></c:otherwise>
-                    </c:choose>
-                </h3>
-                <div class="row g-3 mb-4" style="display:flex; flex-wrap:wrap;">
-                    <c:forEach var="division" items="${divisions}" varStatus="loop">
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <a href="${pageContext.request.contextPath}/admin/division/${division.id}" class="text-decoration-none d-block">
-                                <div class="stat-card stat-color-${loop.index % 20}">
-                                    <div class="stat-value" style="font-size:1.4rem;">${division.localities.size()}</div>
-                                    <div class="stat-label"><c:out value="${division.name}"/></div>
-                                    <div class="small">
-                                        <span class="badge bg-secondary">${type}</span>
-                                    </div>
-                                    <div class="small text-muted mt-1">
-                                        <c:out value="${divisionStats[division.id]}"/> Complaints
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </c:forEach>
+                    <div class="col-6 col-md-3">
+                        <a href="${pageContext.request.contextPath}/admin/localities?type=MUNICIPALITY" class="text-decoration-none d-block">
+                            <div class="stat-card" style="background:#f97316; color:#fff; border-top:none;">
+                                <div class="stat-icon" style="color:#fff;"><i class="bi bi-building"></i></div>
+                                <div class="stat-value" style="color:#fff;">${municipalityCount}</div>
+                                <div class="stat-label" style="color:#fff;">Municipalities</div>
+                                <div class="small text-white-50">View Municipalities &rarr;</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="${pageContext.request.contextPath}/admin/localities?type=CORPORATION" class="text-decoration-none d-block">
+                            <div class="stat-card" style="background:#dc2626; color:#fff; border-top:none;">
+                                <div class="stat-icon" style="color:#fff;"><i class="bi bi-building-fill"></i></div>
+                                <div class="stat-value" style="color:#fff;">${corporationCount}</div>
+                                <div class="stat-label" style="color:#fff;">Municipal Corporation</div>
+                                <div class="small text-white-50">View Corporation &rarr;</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="${pageContext.request.contextPath}/admin/localities?type=NAGAR_PANCHAYAT" class="text-decoration-none d-block">
+                            <div class="stat-card" style="background:#7c3aed; color:#fff; border-top:none;">
+                                <div class="stat-icon" style="color:#fff;"><i class="bi bi-house-fill"></i></div>
+                                <div class="stat-value" style="color:#fff;">${nagarPanchayatCount}</div>
+                                <div class="stat-label" style="color:#fff;">Nagar Panchayats</div>
+                                <div class="small text-white-50">View Nagar Panchayats &rarr;</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
-            </c:if>
-        </c:forEach>
+            </c:when>
 
-        <c:if test="${not hasAnyDivisions}">
-            <div class="text-center py-5">
-                <i class="bi bi-search" style="font-size:3rem; color:#ccc;"></i>
-                <h4 class="mt-3 text-muted">No matching divisions found.</h4>
-                <p class="text-muted">Try changing your filters.</p>
-                <a href="${pageContext.request.contextPath}/admin/localities" class="btn btn-primary">
-                    <i class="bi bi-arrow-counterclockwise"></i> Clear Filters
-                </a>
-            </div>
-        </c:if>
+            <c:otherwise>
+                <c:set var="typeLabel" value="${selectedType}"/>
+                <c:choose>
+                    <c:when test="${selectedType == 'MANDAL'}"><c:set var="typeLabel" value="Mandals"/></c:when>
+                    <c:when test="${selectedType == 'MUNICIPALITY'}"><c:set var="typeLabel" value="Municipalities"/></c:when>
+                    <c:when test="${selectedType == 'CORPORATION'}"><c:set var="typeLabel" value="Municipal Corporation"/></c:when>
+                    <c:when test="${selectedType == 'NAGAR_PANCHAYAT'}"><c:set var="typeLabel" value="Nagar Panchayats"/></c:when>
+                </c:choose>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="section-title"><c:out value="${typeLabel}"/></h2>
+                    <a href="${pageContext.request.contextPath}/admin/localities" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> All Categories
+                    </a>
+                </div>
+
+                <c:set var="divisions" value="${groupedDivisions[selectedType]}"/>
+                <c:if test="${empty divisions}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-search" style="font-size:3rem; color:#ccc;"></i>
+                        <h4 class="mt-3 text-muted">No divisions found.</h4>
+                    </div>
+                </c:if>
+                <c:if test="${not empty divisions}">
+                    <div class="row g-3 mb-4" style="display:flex; flex-wrap:wrap;">
+                        <c:forEach var="division" items="${divisions}" varStatus="loop">
+                            <div class="col-md-4 col-sm-6">
+                                <a href="${pageContext.request.contextPath}/admin/division/${division.id}" class="text-decoration-none d-block">
+                                    <div class="stat-card stat-color-${loop.index % 20}">
+                                        <div class="stat-value" style="font-size:1.4rem;">${division.localities.size()}</div>
+                                        <div class="stat-label"><c:out value="${division.name}"/></div>
+                                        <div class="small text-muted mt-1">
+                                            <c:out value="${divisionStats[division.id]}"/> Complaints
+                                        </div>
+                                        <div class="small text-primary mt-1">View &rarr;</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:if>
+            </c:otherwise>
+        </c:choose>
     </div>
 
     <footer class="app-footer" style="background:var(--accent); color:rgba(255,255,255,0.85); padding:1.2rem 0; text-align:center; font-size:0.85rem;">

@@ -42,35 +42,6 @@
             <h2 class="section-title"><i class="bi bi-file-earmark-text"></i> My Complaints</h2>
         </div>
 
-        <div class="card form-card mb-4">
-            <div class="card-body">
-                <form method="get" action="${pageContext.request.contextPath}/complaints/my" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="type" class="form-label">Complaint Type</label>
-                        <select class="form-select" id="type" name="type">
-                            <option value="">All Types</option>
-                            <option value="CHILD_MARRIAGE" ${selectedType == 'CHILD_MARRIAGE' ? 'selected' : ''}>Child Marriage</option>
-                            <option value="POCSO" ${selectedType == 'POCSO' ? 'selected' : ''}>POCSO</option>
-                            <option value="CHILD_LABOUR" ${selectedType == 'CHILD_LABOUR' ? 'selected' : ''}>Child Labour</option>
-                            <option value="SCHOOL_DROPOUTS" ${selectedType == 'SCHOOL_DROPOUTS' ? 'selected' : ''}>School Dropouts</option>
-                            <option value="CHILD_NEGLIGENCY" ${selectedType == 'CHILD_NEGLIGENCY' ? 'selected' : ''}>Children Negligency</option>
-                            <option value="HIV_INFECTION" ${selectedType == 'HIV_INFECTION' ? 'selected' : ''}>HIV Infection</option>
-                            <option value="ORPHANS" ${selectedType == 'ORPHANS' ? 'selected' : ''}>Orphans</option>
-                            <option value="OTHER" ${selectedType == 'OTHER' ? 'selected' : ''}>Other</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary me-2">
-                            <i class="bi bi-funnel"></i> Filter
-                        </button>
-                        <a href="${pageContext.request.contextPath}/complaints/my" class="btn btn-secondary">
-                            <i class="bi bi-arrow-counterclockwise"></i> Reset
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div class="card form-card">
             <div class="card-body">
                 <c:choose>

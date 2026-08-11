@@ -41,10 +41,10 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="section-title"><c:out value="${pageTitle}"/></h2>
             <div>
-                <a href="${pageContext.request.contextPath}/admin/reports/export/details/excel?type=${reportType}&division=${selectedDivisionId != null ? selectedDivisionId : ''}&locality=${selectedVillageId != null ? selectedVillageId : ''}&complaintType=${selectedType != null ? selectedType : ''}dateFrom=${dateFrom != null ? dateFrom : ''}&dateTo=${dateTo != null ? dateTo : ''}" class="btn btn-success btn-sm me-2">
+                <a href="${pageContext.request.contextPath}/admin/reports/export/details/excel?type=${reportType}" class="btn btn-success btn-sm me-2">
                     <i class="bi bi-file-earmark-excel"></i> Export Excel
                 </a>
-                <a href="${pageContext.request.contextPath}/admin/reports/export/details/pdf?type=${reportType}&division=${selectedDivisionId != null ? selectedDivisionId : ''}&locality=${selectedVillageId != null ? selectedVillageId : ''}&complaintType=${selectedType != null ? selectedType : ''}dateFrom=${dateFrom != null ? dateFrom : ''}&dateTo=${dateTo != null ? dateTo : ''}" class="btn btn-danger btn-sm me-2">
+                <a href="${pageContext.request.contextPath}/admin/reports/export/details/pdf?type=${reportType}" class="btn btn-danger btn-sm me-2">
                     <i class="bi bi-file-earmark-pdf"></i> Export PDF
                 </a>
                 <a href="${pageContext.request.contextPath}/admin/reports" class="btn btn-secondary btn-sm">
