@@ -118,31 +118,31 @@
                             </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Locality Name</th>
-                                        <th>Status</th>
-                                        <th>Last Report</th>
-                                        <th>Complaints</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="locality" items="${localities}" varStatus="loop">
-                                        <c:set var="lastSubmission" value="${lastSubmissionMap[locality.id]}"/>
-                                        <c:set var="status" value="${statusMap[locality.id]}"/>
-                                        <c:set var="locComplaints" value="${complaintCountMap[locality.id]}"/>
-                                        <c:set var="lastReport" value="${lastReportMap[locality.id]}"/>
-                                        <tr>
-                                            <td>${loop.index + 1}</td>
-                                            <td>
-                                                <a href="${pageContext.request.contextPath}/admin/village/${locality.id}" class="text-decoration-none">
-                                                    <c:out value="${locality.name}"/>
-                                                </a>
-                                            </td>
-                                            <td>
+                        <div class="row g-3 mb-4" style="display:flex; flex-wrap:wrap;">
+                            <c:forEach var="locality" items="${localities}" varStatus="loop">
+                                <c:set var="status" value="${statusMap[locality.id]}"/>
+                                <c:set var="locComplaints" value="${complaintCountMap[locality.id]}"/>
+                                <c:set var="lastReport" value="${lastReportMap[locality.id]}"/>
+                                <div class="col-md-4 col-sm-6">
+                                    <a href="${pageContext.request.contextPath}/admin/village/${locality.id}" class="text-decoration-none d-block">
+                                        <div class="stat-card stat-color-${loop.index % 20}">
+                                            <div class="stat-value" style="font-size:1.4rem;">
+                                                <c:out value="${locality.name}"/>
+                                            </div>
+                                            <div class="stat-label">
+                                                <c:choose>
+                                                    <c:when test="${division.type == 'MANDAL'}">Village</c:when>
+                                                    <c:when test="${division.type == 'MUNICIPALITY' || division.type == 'CORPORATION' || division.type == 'NAGAR_PANCHAYAT'}">Ward</c:when>
+                                                    <c:otherwise>Locality</c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                            <div class="small text-muted mt-1">
+                                                <c:out value="${locComplaints}"/> Complaints
+                                            </div>
+                                            <div class="small">
+                                                <c:out value="${lastReport}"/>
+                                            </div>
+                                            <div class="small">
                                                 <c:choose>
                                                     <c:when test="${status == 'Active'}">
                                                         <span class="locality-badge locality-active">Active</span>
@@ -154,13 +154,12 @@
                                                         <span class="locality-badge locality-no-reports">No Reports</span>
                                                     </c:otherwise>
                                                 </c:choose>
-                                            </td>
-                                            <td>${lastReport}</td>
-                                            <td>${locComplaints}</td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
+                                            </div>
+                                            <div class="small text-primary mt-1">View Complaints &rarr;</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </c:forEach>
                         </div>
                     </c:otherwise>
                 </c:choose>
