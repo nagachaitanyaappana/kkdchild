@@ -1,6 +1,7 @@
 # Maven / Java
 target/
 !.mvn
+.mvn/wrapper/maven-wrapper.jar
 
 # IntelliJ / Eclipse
 .idea/
