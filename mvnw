@@ -23,4 +23,4 @@ if [ ! -f "$WRAPPER_JAR" ]; then
   exit 1
 fi
 
-exec java -jar "$WRAPPER_JAR" "$@"
+exec java -Dmaven.multiModuleProjectDirectory="$MAVEN_PROJECTBASEDIR" -cp "$WRAPPER_JAR" org.apache.maven.wrapper.MavenWrapperMain "$@"

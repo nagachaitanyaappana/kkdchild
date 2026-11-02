@@ -19,5 +19,5 @@ if not exist "%WRAPPER_JAR%" (
     exit /b 1
 )
 
-java -jar "%WRAPPER_JAR%" %*
+java -Dmaven.multiModuleProjectDirectory="%MAVEN_PROJECTBASEDIR:~0,-1%" -cp "%WRAPPER_JAR%" org.apache.maven.wrapper.MavenWrapperMain %*
 exit /b %ERRORLEVEL%
